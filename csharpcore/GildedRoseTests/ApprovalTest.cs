@@ -12,16 +12,15 @@ namespace GildedRoseTests
     public class ApprovalTest
     {
         [Fact]
-        public void ThirtyDays()
+        public void Thirty_days_of_quality_updates()
         {
-            var fakeoutput = new StringBuilder();
-            Console.SetOut(new StringWriter(fakeoutput));
+            var fakeOutput = new StringBuilder();
+            Console.SetOut(new StringWriter(fakeOutput));
             Console.SetIn(new StringReader("a\n"));
 
             Program.Main(new string[] { });
-            var output = fakeoutput.ToString();
 
-            Approvals.Verify(output);
+            Approvals.Verify(fakeOutput.ToString());
         }
     }
 }
