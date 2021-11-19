@@ -14,7 +14,7 @@ namespace GildedRoseTests
                 new Item { Name = "Never Negative", SellIn = 1, Quality = 1 }
             };
             var app = new GildedRose(items);
-            app.UpdateQuality();
+            DaysPassed(1, app);
             Assert.Equal(0, items[0].Quality);
         }
 
@@ -28,9 +28,31 @@ namespace GildedRoseTests
             };
 
             var app = new GildedRose(items);
-            app.UpdateQuality();
+            DaysPassed(1, app);
             Assert.Equal(0, items[0].Quality);
             Assert.Equal(0, items[1].Quality);
+        }
+
+        [Fact]
+        public void Should_increase_quality_as_aged_brie_gets_older()
+        {
+            const int initialQuality = 1;
+            var items = new List<Item>
+            {
+                new Item {Name = "Aged Brie", SellIn = 0, Quality = initialQuality }
+            };
+
+            var app = new GildedRose(items);
+            DaysPassed(2, app);
+            Assert.True(items[0].Quality > initialQuality);
+        }
+
+        private static void DaysPassed(int totalDays, GildedRose app)
+        {
+            for (var days = 0; days < totalDays; days++)
+            {
+                app.UpdateQuality();
+            }
         }
     }
 }
