@@ -6,6 +6,8 @@ namespace GildedRoseTests
 {
     public class GildedRoseTest
     {
+        private const int MaxQualityAllowed = 50;
+
         [Fact]
         public void Should_never_have_negative_quality()
         {
@@ -45,6 +47,19 @@ namespace GildedRoseTests
             var app = new GildedRose(items);
             DaysPassed(2, app);
             Assert.True(items[0].Quality > initialQuality);
+        }
+
+        [Fact]
+        public void Should_have_max_quality_of_fifty()
+        {
+            var items = new List<Item>
+            {
+                new Item { Name = "Aged Brie", SellIn = 0, Quality = 40 }
+            };
+
+            var app = new GildedRose(items);
+            DaysPassed(100, app);
+            Assert.Equal(MaxQualityAllowed, items[0].Quality);
         }
 
         private static void DaysPassed(int totalDays, GildedRose app)
