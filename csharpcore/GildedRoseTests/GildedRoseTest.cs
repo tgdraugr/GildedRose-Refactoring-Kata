@@ -7,6 +7,7 @@ namespace GildedRoseTests
     public class GildedRoseTest
     {
         private const int MaxQualityAllowed = 50;
+        private const int MinQualityAllowed = 0;
         private const string AgedBrie = "Aged Brie";
         private const string LegendaryItem = "Sulfuras, Hand of Ragnaros";
         private const string RandomItem = "Random";
@@ -20,8 +21,8 @@ namespace GildedRoseTests
                 new Item { Name = RandomItem, SellIn = 1, Quality = 1 }
             };
             var app = new GildedRose(items);
-            DaysPassed(1, app);
-            Assert.Equal(0, items[0].Quality);
+            DaysPassed(10, app);
+            Assert.Equal(MinQualityAllowed, items[0].Quality);
         }
 
         [Fact]
@@ -35,8 +36,8 @@ namespace GildedRoseTests
 
             var app = new GildedRose(items);
             DaysPassed(1, app);
-            Assert.Equal(0, items[0].Quality);
-            Assert.Equal(0, items[1].Quality);
+            Assert.Equal(MinQualityAllowed, items[0].Quality);
+            Assert.Equal(MinQualityAllowed, items[1].Quality);
         }
 
         [Fact]
