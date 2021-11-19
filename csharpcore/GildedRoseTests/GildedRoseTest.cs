@@ -7,13 +7,16 @@ namespace GildedRoseTests
     public class GildedRoseTest
     {
         private const int MaxQualityAllowed = 50;
+        private const string AgedBrie = "Aged Brie";
+        private const string Sulfuras = "Sulfuras, Hand of Ragnaros";
+        private const string RandomItem = "Random";
 
         [Fact]
         public void Should_never_have_negative_quality()
         {
             var items = new List<Item>
             {
-                new Item { Name = "Never Negative", SellIn = 1, Quality = 1 }
+                new Item { Name = RandomItem, SellIn = 1, Quality = 1 }
             };
             var app = new GildedRose(items);
             DaysPassed(1, app);
@@ -25,8 +28,8 @@ namespace GildedRoseTests
         {
             var items = new List<Item>
             {
-                new Item { Name = "an item ", SellIn = 0, Quality = 2 },
-                new Item { Name = "another item", SellIn = -1, Quality = 2 }
+                new Item { Name = RandomItem, SellIn = 0, Quality = 2 },
+                new Item { Name = RandomItem, SellIn = -1, Quality = 2 }
             };
 
             var app = new GildedRose(items);
@@ -41,7 +44,7 @@ namespace GildedRoseTests
             const int initialQuality = 1;
             var items = new List<Item>
             {
-                new Item {Name = "Aged Brie", SellIn = 0, Quality = initialQuality }
+                new Item { Name = AgedBrie, SellIn = 0, Quality = initialQuality }
             };
 
             var app = new GildedRose(items);
@@ -54,12 +57,27 @@ namespace GildedRoseTests
         {
             var items = new List<Item>
             {
-                new Item { Name = "Aged Brie", SellIn = 0, Quality = 40 }
+                new Item { Name = AgedBrie, SellIn = 0, Quality = 40 }
             };
 
             var app = new GildedRose(items);
             DaysPassed(100, app);
             Assert.Equal(MaxQualityAllowed, items[0].Quality);
+        }
+
+        [Fact]
+        public void Should_keep_legendary_item_intact()
+        {
+            const int initialQuality = MaxQualityAllowed + 20;
+            
+            var items = new List<Item>
+            {
+                new Item { Name = Sulfuras, SellIn = 0, Quality = initialQuality }
+            };
+
+            var app = new GildedRose(items);
+            DaysPassed(50, app);
+            Assert.Equal(initialQuality, items[0].Quality);
         }
 
         private static void DaysPassed(int totalDays, GildedRose app)
