@@ -7,12 +7,15 @@ namespace GildedRoseTests
     public class GildedRoseTest
     {
         [Fact]
-        public void foo()
+        public void Should_never_have_negative_quality()
         {
-            IList<Item> Items = new List<Item> { new Item { Name = "foo", SellIn = 0, Quality = 0 } };
-            GildedRose app = new GildedRose(Items);
+            var items = new List<Item>
+            {
+                new Item { Name = "Never Negative", SellIn = 1, Quality = 1 }
+            };
+            var app = new GildedRose(items);
             app.UpdateQuality();
-            Assert.Equal("fixme", Items[0].Name);
+            Assert.Equal(0, items[0].Quality);
         }
     }
 }
