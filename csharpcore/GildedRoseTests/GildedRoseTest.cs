@@ -8,8 +8,9 @@ namespace GildedRoseTests
     {
         private const int MaxQualityAllowed = 50;
         private const string AgedBrie = "Aged Brie";
-        private const string Sulfuras = "Sulfuras, Hand of Ragnaros";
+        private const string LegendaryItem = "Sulfuras, Hand of Ragnaros";
         private const string RandomItem = "Random";
+        private const string BackstagePasses = "Backstage passes to a TAFKAL80ETC concert";
 
         [Fact]
         public void Should_never_have_negative_quality()
@@ -72,12 +73,57 @@ namespace GildedRoseTests
             
             var items = new List<Item>
             {
-                new Item { Name = Sulfuras, SellIn = 0, Quality = initialQuality }
+                new Item { Name = LegendaryItem, SellIn = 0, Quality = initialQuality }
             };
 
             var app = new GildedRose(items);
             DaysPassed(50, app);
             Assert.Equal(initialQuality, items[0].Quality);
+        }
+
+        [Fact]
+        public void Should_increase_quality_as_concert_approaches()
+        {
+            var items = new List<Item>
+            {
+                new Item { Name = BackstagePasses, SellIn = 30, Quality = 10 }
+            };
+
+            var app = new GildedRose(items);
+            DaysPassed(10, app);
+            Assert.Equal(20, items[0].Quality);
+        }
+        
+        [Theory]
+        [InlineData(10, 2)]
+        [InlineData(5, 3)]
+        public void Should_increase_quality_by_different_rates_as_concert_approaches(int sellIn, int qualityFactor)
+        {
+            const int initialQuality = 10;
+            const int daysGoneBy = 5;
+            var qualityBump = qualityFactor * daysGoneBy;
+            
+            var items = new List<Item>
+            {
+                new Item { Name = BackstagePasses, SellIn = sellIn, Quality = initialQuality }
+            };
+            
+            var app = new GildedRose(items);
+            DaysPassed(daysGoneBy, app);
+            Assert.Equal(initialQuality + qualityBump, items[0].Quality);
+        }
+
+        [Fact]
+        public void Should_drop_quality_to_zero_after_concert()
+        {
+            var items = new List<Item>
+            {
+                new Item { Name = BackstagePasses, SellIn = 0, Quality = 10 }
+            };
+
+            var app = new GildedRose(items);
+            DaysPassed(1, app);
+            Assert.Equal(0, items[0].Quality);
         }
 
         private static void DaysPassed(int totalDays, GildedRose app)
