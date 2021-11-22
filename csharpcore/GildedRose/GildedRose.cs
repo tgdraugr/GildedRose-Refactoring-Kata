@@ -9,6 +9,7 @@ namespace GildedRoseKata
         public const string AgedBrie = "Aged Brie";
         public const string BackstagePasses = "Backstage passes to a TAFKAL80ETC concert";
         public const string Legendary = "Sulfuras, Hand of Ragnaros";
+        public const string Conjured = "Conjured";
 
         private readonly IList<Item> _items;
         private readonly IEnumerable<GildedRoseItem> _gildedRoseItems;
@@ -28,8 +29,18 @@ namespace GildedRoseKata
         {
             foreach (var item in _gildedRoseItems)
             {
+                SellInUpdaterFor(item.Name).Invoke(item);
                 QualityUpdaterFor(item.Name).Invoke(item);
             }
+        }
+
+        private static Action<GildedRoseItem> SellInUpdaterFor(string itemName)
+        {
+            return itemName switch
+            {
+                Legendary => item => { },
+                _ => item => item.SetCloserToExpiration()
+            };
         }
 
         private static Action<GildedRoseItem> QualityUpdaterFor(string itemName)
@@ -39,7 +50,7 @@ namespace GildedRoseKata
                 AgedBrie => item => 
                 {
                     item.IncreaseQuality();
-                    item.SetCloserToExpiration();
+                    
                     if (item.IsExpired())
                     {
                         item.IncreaseQuality();
@@ -47,30 +58,38 @@ namespace GildedRoseKata
                 },
                 BackstagePasses => item =>
                 {
-                    item.IncreaseQuality();
-
-                    if (item.IsNearExpirationBy(10))
-                    {
-                        item.IncreaseQuality();
-                    }
-
                     if (item.IsNearExpirationBy(5))
                     {
+                        item.IncreaseQuality(3);
+                    }
+                    else if (item.IsNearExpirationBy(10))
+                    {
+                        item.IncreaseQuality(2);
+                    }
+                    else
+                    {
                         item.IncreaseQuality();
                     }
-                    
-                    item.SetCloserToExpiration();
                     
                     if (item.IsExpired())
                     {
                         item.ZeroOutQuality();
                     }
                 },
+                Conjured => item =>
+                {
+                    item.DegradeQuality(2);
+                    
+                    if (item.IsExpired())
+                    {
+                        item.DegradeQuality(2);
+                    }
+                },
                 Legendary => item => item.IncreaseQuality(),
                 _ => item =>
                 {
                     item.DegradeQuality();
-                    item.SetCloserToExpiration();
+                    
                     if (item.IsExpired())
                     {
                         item.DegradeQuality();

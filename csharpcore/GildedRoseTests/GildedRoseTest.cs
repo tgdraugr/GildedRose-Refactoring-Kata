@@ -35,6 +35,23 @@ namespace GildedRoseTests
             Assert.Equal(GildedRoseItem.MinQualityAllowed, items[0].Quality);
             Assert.Equal(GildedRoseItem.MinQualityAllowed, items[1].Quality);
         }
+        
+        [Fact]
+        public void Should_degrade_quality_twice_as_fast_on_conjured_items()
+        {
+            var items = new List<Item>
+            {
+                new Item { Name = GildedRose.Conjured, SellIn = 10, Quality = 9 },
+            };
+
+            var app = new GildedRose(items);
+            DaysPassed(1, app);
+            Assert.Equal(7, items[0].Quality);
+            DaysPassed(1, app);
+            Assert.Equal(5, items[0].Quality);
+            DaysPassed(10, app);
+            Assert.Equal(0, items[0].Quality);
+        }
 
         [Fact]
         public void Should_increase_quality_as_aged_brie_gets_older()
@@ -122,7 +139,7 @@ namespace GildedRoseTests
             DaysPassed(1, app);
             Assert.Equal(0, items[0].Quality);
         }
-
+        
         private static void DaysPassed(int totalDays, GildedRose app)
         {
             for (var days = 0; days < totalDays; days++)
