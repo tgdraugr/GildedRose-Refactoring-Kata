@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GildedRoseKata
 {
     public class GildedRose
     {
+        public const string AgedBrie = "Aged Brie";
+        public const string BackstagePasses = "Backstage passes to a TAFKAL80ETC concert";
+        public const string Legendary = "Sulfuras, Hand of Ragnaros";
+
         private readonly IList<Item> _items;
         private readonly IEnumerable<GildedRoseItem> _gildedRoseItems;
 
@@ -23,72 +28,55 @@ namespace GildedRoseKata
         {
             foreach (var item in _gildedRoseItems)
             {
-                UpdateQuality(item);
+                QualityUpdaterFor(item.Name).Invoke(item);
             }
         }
 
-        private void UpdateQuality(GildedRoseItem item)
+        private static Action<GildedRoseItem> QualityUpdaterFor(string itemName)
         {
-            switch (item.Name)
+            return itemName switch
             {
-                case "Backstage passes to a TAFKAL80ETC concert":
-                    UpdateQualityOfBackstagePasses(item);
-                    break;
+                AgedBrie => item => 
+                {
+                    item.IncreaseQuality();
+                    item.SetCloserToExpiration();
+                    if (item.IsExpired())
+                    {
+                        item.IncreaseQuality();
+                    }
+                },
+                BackstagePasses => item =>
+                {
+                    item.IncreaseQuality();
 
-                case "Aged Brie":
-                    UpdateQualityOfAgedBrie(item);
-                    break;
+                    if (item.IsNearExpirationBy(10))
+                    {
+                        item.IncreaseQuality();
+                    }
 
-                case "Sulfuras, Hand of Ragnaros":
-                    UpdateQualityOfLegendaryItem(item);
-                    break;
-
-                default:
-                    UpdateQualityOfCommon(item);
-                    break;
-            }
-        }
-
-        private void UpdateQualityOfCommon(GildedRoseItem item)
-        {
-            item.DegradeQuality();
-
-            item.SetCloserToExpiration();
-
-            if (item.IsExpired()) item.DegradeQuality();
-        }
-
-        private void UpdateQualityOfLegendaryItem(GildedRoseItem item)
-        {
-            item.IncreaseQuality();
-        }
-
-        private void UpdateQualityOfAgedBrie(GildedRoseItem item)
-        {
-            item.IncreaseQuality();
-
-            item.SetCloserToExpiration();
-
-            if (item.IsExpired()) item.IncreaseQuality();
-        }
-
-        private void UpdateQualityOfBackstagePasses(GildedRoseItem item)
-        {
-            item.IncreaseQuality();
-
-            if (item.IsNearExpirationBy(10))
-            {
-                item.IncreaseQuality();
-            }
-
-            if (item.IsNearExpirationBy(5))
-            {
-                item.IncreaseQuality();
-            }
-
-            item.SetCloserToExpiration();
-
-            if (item.IsExpired()) item.ZeroOutQuality();
+                    if (item.IsNearExpirationBy(5))
+                    {
+                        item.IncreaseQuality();
+                    }
+                    
+                    item.SetCloserToExpiration();
+                    
+                    if (item.IsExpired())
+                    {
+                        item.ZeroOutQuality();
+                    }
+                },
+                Legendary => item => item.IncreaseQuality(),
+                _ => item =>
+                {
+                    item.DegradeQuality();
+                    item.SetCloserToExpiration();
+                    if (item.IsExpired())
+                    {
+                        item.DegradeQuality();
+                    }
+                }
+            };
         }
     }
 }

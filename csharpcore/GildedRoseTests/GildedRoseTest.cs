@@ -6,10 +6,7 @@ namespace GildedRoseTests
 {
     public class GildedRoseTest
     {
-        private const string AgedBrie = "Aged Brie";
-        private const string LegendaryItem = "Sulfuras, Hand of Ragnaros";
         private const string RandomItem = "Random";
-        private const string BackstagePasses = "Backstage passes to a TAFKAL80ETC concert";
 
         [Fact]
         public void Should_never_have_negative_quality()
@@ -18,6 +15,7 @@ namespace GildedRoseTests
             {
                 new Item { Name = RandomItem, SellIn = 1, Quality = 1 }
             };
+     
             var app = new GildedRose(items);
             DaysPassed(10, app);
             Assert.Equal(GildedRoseItem.MinQualityAllowed, items[0].Quality);
@@ -44,7 +42,7 @@ namespace GildedRoseTests
             const int initialQuality = 1;
             var items = new List<Item>
             {
-                new Item { Name = AgedBrie, SellIn = 0, Quality = initialQuality }
+                new Item { Name = GildedRose.AgedBrie, SellIn = 0, Quality = initialQuality }
             };
 
             var app = new GildedRose(items);
@@ -57,7 +55,7 @@ namespace GildedRoseTests
         {
             var items = new List<Item>
             {
-                new Item { Name = AgedBrie, SellIn = 0, Quality = 40 }
+                new Item { Name = GildedRose.AgedBrie, SellIn = 0, Quality = 40 }
             };
 
             var app = new GildedRose(items);
@@ -72,7 +70,7 @@ namespace GildedRoseTests
             
             var items = new List<Item>
             {
-                new Item { Name = LegendaryItem, SellIn = 0, Quality = initialQuality }
+                new Item { Name = GildedRose.Legendary, SellIn = 0, Quality = initialQuality }
             };
 
             var app = new GildedRose(items);
@@ -85,7 +83,7 @@ namespace GildedRoseTests
         {
             var items = new List<Item>
             {
-                new Item { Name = BackstagePasses, SellIn = 30, Quality = 10 }
+                new Item { Name = GildedRose.BackstagePasses, SellIn = 30, Quality = 10 }
             };
 
             var app = new GildedRose(items);
@@ -104,7 +102,7 @@ namespace GildedRoseTests
             
             var items = new List<Item>
             {
-                new Item { Name = BackstagePasses, SellIn = sellIn, Quality = initialQuality }
+                new Item { Name = GildedRose.BackstagePasses, SellIn = sellIn, Quality = initialQuality }
             };
             
             var app = new GildedRose(items);
@@ -117,7 +115,7 @@ namespace GildedRoseTests
         {
             var items = new List<Item>
             {
-                new Item { Name = BackstagePasses, SellIn = 0, Quality = 10 }
+                new Item { Name = GildedRose.BackstagePasses, SellIn = 0, Quality = 10 }
             };
 
             var app = new GildedRose(items);
