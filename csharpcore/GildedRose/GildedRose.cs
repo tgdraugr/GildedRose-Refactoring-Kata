@@ -23,21 +23,28 @@ namespace GildedRoseKata
 
         private static void UpdateQuality(Item item)
         {
-            DegradeQualityOnCommonItem(item);
-
             switch (item.Name)
             {
+                case "Backstage passes to a TAFKAL80ETC concert":
+                    IncreaseQualityForBackstagePasses(item);
+                    item.SellIn -= 1;
+                    break;
+                
                 case "Aged Brie":
+                    IncreaseQuality(item);
+                    item.SellIn -= 1;
+                    break;
+                
                 case "Sulfuras, Hand of Ragnaros":
                     IncreaseQuality(item);
                     break;
-                case "Backstage passes to a TAFKAL80ETC concert":
-                    IncreaseQualityForBackstagePasses(item);
+                
+                default:
+                    DegradeQuality(item);
+                    item.SellIn -= 1;
                     break;
             }
-
-            UpdateSellInOnCommonItem(item);
-
+            
             if (item.SellIn < 0)
             {
                 switch (item.Name)
@@ -45,21 +52,18 @@ namespace GildedRoseKata
                     case "Backstage passes to a TAFKAL80ETC concert":
                         item.Quality -= item.Quality;
                         break;
+                    
                     case "Aged Brie":
                         IncreaseQuality(item);
                         break;
+                    
+                    case "Sulfuras, Hand of Ragnaros":
+                        break;
+
                     default:
-                        DegradeQualityOnCommonItem(item);
+                        DegradeQuality(item);
                         break;
                 }
-            }
-        }
-
-        private static void UpdateSellInOnCommonItem(Item item)
-        {
-            if (item.Name != "Sulfuras, Hand of Ragnaros")
-            {
-                item.SellIn -= 1;
             }
         }
 
@@ -75,16 +79,6 @@ namespace GildedRoseKata
             if (item.SellIn <= 5)
             {
                 IncreaseQuality(item);
-            }
-        }
-
-        private static void DegradeQualityOnCommonItem(Item item)
-        {
-            if (item.Name != "Sulfuras, Hand of Ragnaros" && 
-                item.Name != "Aged Brie" && 
-                item.Name != "Backstage passes to a TAFKAL80ETC concert")
-            {
-                DegradeQuality(item);
             }
         }
 
