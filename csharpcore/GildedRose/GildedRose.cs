@@ -26,30 +26,54 @@ namespace GildedRoseKata
             switch (item.Name)
             {
                 case "Backstage passes to a TAFKAL80ETC concert":
-                    IncreaseQualityForBackstagePasses(item);
-                    item.SellIn -= 1;
-                    if (item.SellIn < 0) item.Quality -= item.Quality;
+                    UpdateQualityOfBackstagePasses(item);
                     break;
                 
                 case "Aged Brie":
-                    IncreaseQuality(item);
-                    item.SellIn -= 1;
-                    if (item.SellIn < 0) IncreaseQuality(item);
+                    UpdateQualityOfAgedBrie(item);
                     break;
                 
                 case "Sulfuras, Hand of Ragnaros":
-                    IncreaseQuality(item);
+                    UpdateQualityOfLegendaryItem(item);
                     break;
                 
                 default:
-                    DegradeQuality(item);
-                    item.SellIn -= 1;
-                    if (item.SellIn < 0) DegradeQuality(item);
+                    UpdateQualityOfCommon(item);
                     break;
             }
         }
 
-        private static void IncreaseQualityForBackstagePasses(Item item)
+        private static void UpdateQualityOfCommon(Item item)
+        {
+            DegradeQuality(item);
+            
+            item.SellIn -= 1;
+            
+            if (IsExpired(item)) 
+                DegradeQuality(item);
+        }
+
+        private static bool IsExpired(Item item)
+        {
+            return item.SellIn < 0;
+        }
+
+        private static void UpdateQualityOfLegendaryItem(Item item)
+        {
+            IncreaseQuality(item);
+        }
+
+        private static void UpdateQualityOfAgedBrie(Item item)
+        {
+            IncreaseQuality(item);
+            
+            item.SellIn -= 1;
+            
+            if (IsExpired(item)) 
+                IncreaseQuality(item);
+        }
+
+        private static void UpdateQualityOfBackstagePasses(Item item)
         {
             IncreaseQuality(item);
                 
@@ -62,6 +86,11 @@ namespace GildedRoseKata
             {
                 IncreaseQuality(item);
             }
+
+            item.SellIn -= 1;
+            
+            if (IsExpired(item)) 
+                item.Quality -= item.Quality;
         }
 
         private static void DegradeQuality(Item item)
