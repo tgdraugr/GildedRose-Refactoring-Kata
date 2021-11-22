@@ -7,7 +7,7 @@ namespace GildedRoseKata
     public class GildedRose
     {
         public const string AgedBrie = "Aged Brie";
-        public const string BackstagePasses = "Backstage passes to a TAFKAL80ETC concert";
+        public const string BackstagePasses = "Backstage passes";
         public const string Legendary = "Sulfuras, Hand of Ragnaros";
         public const string Conjured = "Conjured";
 
@@ -56,7 +56,7 @@ namespace GildedRoseKata
                         item.IncreaseQuality();
                     }
                 },
-                BackstagePasses => item =>
+                var name when name.Contains(BackstagePasses) => item =>
                 {
                     if (item.IsNearExpirationBy(5))
                     {
@@ -76,7 +76,8 @@ namespace GildedRoseKata
                         item.ZeroOutQuality();
                     }
                 },
-                Conjured => item =>
+                Legendary => item => item.IncreaseQuality(),
+                var name when name.Contains(Conjured) => item =>
                 {
                     item.DegradeQuality(2);
                     
@@ -85,7 +86,6 @@ namespace GildedRoseKata
                         item.DegradeQuality(2);
                     }
                 },
-                Legendary => item => item.IncreaseQuality(),
                 _ => item =>
                 {
                     item.DegradeQuality();
@@ -94,7 +94,7 @@ namespace GildedRoseKata
                     {
                         item.DegradeQuality();
                     }
-                }
+                },
             };
         }
     }
