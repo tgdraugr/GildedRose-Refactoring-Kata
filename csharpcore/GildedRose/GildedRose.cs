@@ -28,11 +28,13 @@ namespace GildedRoseKata
                 case "Backstage passes to a TAFKAL80ETC concert":
                     IncreaseQualityForBackstagePasses(item);
                     item.SellIn -= 1;
+                    if (item.SellIn < 0) item.Quality -= item.Quality;
                     break;
                 
                 case "Aged Brie":
                     IncreaseQuality(item);
                     item.SellIn -= 1;
+                    if (item.SellIn < 0) IncreaseQuality(item);
                     break;
                 
                 case "Sulfuras, Hand of Ragnaros":
@@ -42,28 +44,8 @@ namespace GildedRoseKata
                 default:
                     DegradeQuality(item);
                     item.SellIn -= 1;
+                    if (item.SellIn < 0) DegradeQuality(item);
                     break;
-            }
-            
-            if (item.SellIn < 0)
-            {
-                switch (item.Name)
-                {
-                    case "Backstage passes to a TAFKAL80ETC concert":
-                        item.Quality -= item.Quality;
-                        break;
-                    
-                    case "Aged Brie":
-                        IncreaseQuality(item);
-                        break;
-                    
-                    case "Sulfuras, Hand of Ragnaros":
-                        break;
-
-                    default:
-                        DegradeQuality(item);
-                        break;
-                }
             }
         }
 
