@@ -6,8 +6,6 @@ namespace GildedRoseTests
 {
     public class GildedRoseTest
     {
-        private const int MaxQualityAllowed = 50;
-        private const int MinQualityAllowed = 0;
         private const string AgedBrie = "Aged Brie";
         private const string LegendaryItem = "Sulfuras, Hand of Ragnaros";
         private const string RandomItem = "Random";
@@ -22,7 +20,7 @@ namespace GildedRoseTests
             };
             var app = new GildedRose(items);
             DaysPassed(10, app);
-            Assert.Equal(MinQualityAllowed, items[0].Quality);
+            Assert.Equal(GildedRoseItem.MinQualityAllowed, items[0].Quality);
         }
 
         [Fact]
@@ -36,8 +34,8 @@ namespace GildedRoseTests
 
             var app = new GildedRose(items);
             DaysPassed(1, app);
-            Assert.Equal(MinQualityAllowed, items[0].Quality);
-            Assert.Equal(MinQualityAllowed, items[1].Quality);
+            Assert.Equal(GildedRoseItem.MinQualityAllowed, items[0].Quality);
+            Assert.Equal(GildedRoseItem.MinQualityAllowed, items[1].Quality);
         }
 
         [Fact]
@@ -64,13 +62,13 @@ namespace GildedRoseTests
 
             var app = new GildedRose(items);
             DaysPassed(100, app);
-            Assert.Equal(MaxQualityAllowed, items[0].Quality);
+            Assert.Equal(GildedRoseItem.MaxQualityAllowed, items[0].Quality);
         }
 
         [Fact]
         public void Should_keep_legendary_item_intact()
         {
-            const int initialQuality = MaxQualityAllowed + 20;
+            const int initialQuality = GildedRoseItem.MaxQualityAllowed + 20;
             
             var items = new List<Item>
             {

@@ -1,112 +1,94 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GildedRoseKata
 {
     public class GildedRose
     {
         private readonly IList<Item> _items;
-        private const int MinQualityAllowed = 0;
-        private const int MaxQualityAllowed = 50;
+        private readonly IEnumerable<GildedRoseItem> _gildedRoseItems;
 
         public GildedRose(IList<Item> items)
+            : this(items.Select(item => new GildedRoseItem(item)))
         {
             _items = items;
         }
 
+        private GildedRose(IEnumerable<GildedRoseItem> gildedRoseItems)
+        {
+            _gildedRoseItems = gildedRoseItems;
+        }
+
         public void UpdateQuality()
         {
-            foreach (var item in _items)
+            foreach (var item in _gildedRoseItems)
             {
                 UpdateQuality(item);
             }
         }
 
-        private static void UpdateQuality(Item item)
+        private void UpdateQuality(GildedRoseItem item)
         {
             switch (item.Name)
             {
                 case "Backstage passes to a TAFKAL80ETC concert":
                     UpdateQualityOfBackstagePasses(item);
                     break;
-                
+
                 case "Aged Brie":
                     UpdateQualityOfAgedBrie(item);
                     break;
-                
+
                 case "Sulfuras, Hand of Ragnaros":
                     UpdateQualityOfLegendaryItem(item);
                     break;
-                
+
                 default:
                     UpdateQualityOfCommon(item);
                     break;
             }
         }
 
-        private static void UpdateQualityOfCommon(Item item)
+        private void UpdateQualityOfCommon(GildedRoseItem item)
         {
-            DegradeQuality(item);
-            
-            item.SellIn -= 1;
-            
-            if (IsExpired(item)) 
-                DegradeQuality(item);
+            item.DegradeQuality();
+
+            item.SetCloserToExpiration();
+
+            if (item.IsExpired()) item.DegradeQuality();
         }
 
-        private static bool IsExpired(Item item)
+        private void UpdateQualityOfLegendaryItem(GildedRoseItem item)
         {
-            return item.SellIn < 0;
+            item.IncreaseQuality();
         }
 
-        private static void UpdateQualityOfLegendaryItem(Item item)
+        private void UpdateQualityOfAgedBrie(GildedRoseItem item)
         {
-            IncreaseQuality(item);
+            item.IncreaseQuality();
+
+            item.SetCloserToExpiration();
+
+            if (item.IsExpired()) item.IncreaseQuality();
         }
 
-        private static void UpdateQualityOfAgedBrie(Item item)
+        private void UpdateQualityOfBackstagePasses(GildedRoseItem item)
         {
-            IncreaseQuality(item);
-            
-            item.SellIn -= 1;
-            
-            if (IsExpired(item)) 
-                IncreaseQuality(item);
-        }
+            item.IncreaseQuality();
 
-        private static void UpdateQualityOfBackstagePasses(Item item)
-        {
-            IncreaseQuality(item);
-                
-            if (item.SellIn <= 10)
+            if (item.IsNearExpirationBy(10))
             {
-                IncreaseQuality(item);
+                item.IncreaseQuality();
             }
 
-            if (item.SellIn <= 5)
+            if (item.IsNearExpirationBy(5))
             {
-                IncreaseQuality(item);
+                item.IncreaseQuality();
             }
 
-            item.SellIn -= 1;
-            
-            if (IsExpired(item)) 
-                item.Quality -= item.Quality;
-        }
+            item.SetCloserToExpiration();
 
-        private static void DegradeQuality(Item item)
-        {
-            if (item.Quality > MinQualityAllowed)
-            {
-                item.Quality -= 1;
-            }
-        }
-
-        private static void IncreaseQuality(Item item)
-        {
-            if (item.Quality < MaxQualityAllowed)
-            {
-                item.Quality += 1;
-            }
+            if (item.IsExpired()) item.ZeroOutQuality();
         }
     }
 }
