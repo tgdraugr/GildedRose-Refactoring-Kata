@@ -5,6 +5,8 @@ namespace GildedRoseKata
     public class GildedRose
     {
         private readonly IList<Item> _items;
+        private const int MinQualityAllowed = 0;
+        private const int MaxQualityAllowed = 50;
 
         public GildedRose(IList<Item> items)
         {
@@ -21,62 +23,74 @@ namespace GildedRoseKata
 
         private static void UpdateQuality(Item item)
         {
-            if (item.Name != "Aged Brie" && item.Name != "Backstage passes to a TAFKAL80ETC concert")
-            {
-                if (item.Name != "Sulfuras, Hand of Ragnaros")
-                {
-                    DecreaseQuality(item);
-                }
-            }
-            else
-            {
-                IncreaseQuality(item);
-                
-                if (item.Name == "Backstage passes to a TAFKAL80ETC concert")
-                {
-                    if (item.SellIn < 11)
-                    {
-                        IncreaseQuality(item);
-                    }
+            DegradeQualityOnCommonItem(item);
 
-                    if (item.SellIn < 6)
-                    {
-                        IncreaseQuality(item);
-                    }
-                }
+            switch (item.Name)
+            {
+                case "Aged Brie":
+                case "Sulfuras, Hand of Ragnaros":
+                    IncreaseQuality(item);
+                    break;
+                case "Backstage passes to a TAFKAL80ETC concert":
+                    IncreaseQualityForBackstagePasses(item);
+                    break;
             }
 
-            if (item.Name != "Sulfuras, Hand of Ragnaros")
-            {
-                item.SellIn -= 1;
-            }
+            UpdateSellInOnCommonItem(item);
 
             if (item.SellIn < 0)
             {
-                if (item.Name != "Aged Brie")
+                switch (item.Name)
                 {
-                    if (item.Name != "Backstage passes to a TAFKAL80ETC concert")
-                    {
-                        if (item.Name != "Sulfuras, Hand of Ragnaros")
-                        {
-                            DecreaseQuality(item);
-                        }
-                    }
-                    else
-                    {
+                    case "Backstage passes to a TAFKAL80ETC concert":
                         item.Quality -= item.Quality;
-                    }
-                }
-                else
-                {
-                    IncreaseQuality(item);
+                        break;
+                    case "Aged Brie":
+                        IncreaseQuality(item);
+                        break;
+                    default:
+                        DegradeQualityOnCommonItem(item);
+                        break;
                 }
             }
         }
 
-        private static void DecreaseQuality(Item item)
+        private static void UpdateSellInOnCommonItem(Item item)
         {
-            if (item.Quality > 0)
+            if (item.Name != "Sulfuras, Hand of Ragnaros")
+            {
+                item.SellIn -= 1;
+            }
+        }
+
+        private static void IncreaseQualityForBackstagePasses(Item item)
+        {
+            IncreaseQuality(item);
+                
+            if (item.SellIn <= 10)
+            {
+                IncreaseQuality(item);
+            }
+
+            if (item.SellIn <= 5)
+            {
+                IncreaseQuality(item);
+            }
+        }
+
+        private static void DegradeQualityOnCommonItem(Item item)
+        {
+            if (item.Name != "Sulfuras, Hand of Ragnaros" && 
+                item.Name != "Aged Brie" && 
+                item.Name != "Backstage passes to a TAFKAL80ETC concert")
+            {
+                DegradeQuality(item);
+            }
+        }
+
+        private static void DegradeQuality(Item item)
+        {
+            if (item.Quality > MinQualityAllowed)
             {
                 item.Quality -= 1;
             }
@@ -84,7 +98,7 @@ namespace GildedRoseKata
 
         private static void IncreaseQuality(Item item)
         {
-            if (item.Quality < 50)
+            if (item.Quality < MaxQualityAllowed)
             {
                 item.Quality += 1;
             }
